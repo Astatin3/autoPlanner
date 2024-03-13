@@ -4,17 +4,19 @@ from pygame.locals import *
 nodeColor = (255, 255, 255)
 nodeRadius = 15
 
-rotNodeDist = 30
+rotNodeDist = 35
 rotNodeColor = (255, 0, 255)
-rotNodeRadius = 5
+rotNodeRadius = 10
+
+nodeSquareRadius = 35
+nodeSquareColor = (127, 127, 127, 0.5)
+nodeSquareWidth = 3
 
 lineApproximationLineColor = (127, 127, 127, 0.5)
 lineApproximationLineWidth = 3
 
 curveEditPointColor = (0, 255, 255)
 curveEditPointRadius = 5
-
-name = "Path Editor"
 
 nodes = []
 curveEditPoints = []
@@ -24,23 +26,38 @@ clickType = -1
 clickIndex = -1
 
 pg = None
-pathRenderer = None
+render = None
 
 
 def refresh():
-  pathRenderer.render(nodes, curveEditPoints)
+  render.render(nodes, curveEditPoints)
   
   for i in range(0,len(curveEditPoints)):
-    pathRenderer.line(lineApproximationLineColor, nodes[i], curveEditPoints[i], lineApproximationLineWidth)
-    pathRenderer.line(lineApproximationLineColor, curveEditPoints[i], nodes[i+1], lineApproximationLineWidth)
+    render.line(lineApproximationLineColor, nodes[i], curveEditPoints[i], lineApproximationLineWidth)
+    render.line(lineApproximationLineColor, curveEditPoints[i], nodes[i+1], lineApproximationLineWidth)
     #bezier(nodes[i], curveEditPoints[i], nodes[i+1])
-    pathRenderer.circle(curveEditPointColor, curveEditPoints[i], curveEditPointRadius)
+    render.circle(curveEditPointColor, curveEditPoints[i], curveEditPointRadius)
   for i in range(0,len(nodeRotations)):
     posX = (math.sin(nodeRotations[i])*rotNodeDist) + nodes[i][0]
     posY = (math.cos(nodeRotations[i])*rotNodeDist) + nodes[i][1]
-    pathRenderer.circle(rotNodeColor, (posX, posY), rotNodeRadius)
+    render.circle(rotNodeColor, (posX, posY), rotNodeRadius)
+
+    rect1 = ((math.sin(nodeRotations[i] + math.pi*-0.25)*nodeSquareRadius) + nodes[i][0],
+             (math.cos(nodeRotations[i] + math.pi*-0.25)*nodeSquareRadius) + nodes[i][1])
+    rect2 = ((math.sin(nodeRotations[i] + math.pi*0.25)*nodeSquareRadius) + nodes[i][0],
+             (math.cos(nodeRotations[i] + math.pi*0.25)*nodeSquareRadius) + nodes[i][1])
+    rect3 = ((math.sin(nodeRotations[i] + math.pi*0.75)*nodeSquareRadius) + nodes[i][0],
+             (math.cos(nodeRotations[i] + math.pi*0.75)*nodeSquareRadius) + nodes[i][1])
+    rect4 = ((math.sin(nodeRotations[i] + math.pi*1.25)*nodeSquareRadius) + nodes[i][0],
+             (math.cos(nodeRotations[i] + math.pi*1.25)*nodeSquareRadius) + nodes[i][1])
+
+    render.line(nodeSquareColor, rect1, rect2, nodeSquareWidth)
+    render.line(nodeSquareColor, rect2, rect3, nodeSquareWidth)
+    render.line(nodeSquareColor, rect3, rect4, nodeSquareWidth)
+    render.line(nodeSquareColor, rect4, rect1, nodeSquareWidth)
   for pos in nodes:
-    pathRenderer.circle(nodeColor, pos, nodeRadius)
+
+    render.circle(nodeColor, pos, nodeRadius)
   pg.display.update()
 
 def getElemAt(pos):
@@ -84,14 +101,14 @@ def points2rad(center, pos):
   return -math.atan2(diffY, diffX) - (math.pi/2)
 
 class pathEditor:
-
-  def __init__(self, tmppg, tmppathRenderer):
+  name = "Path Editor"
+  def __init__(self, tmppg, tmprender):
     global pg
     pg = tmppg
     # global screen
     # screen = tmpscreen
-    global pathRenderer
-    pathRenderer = tmppathRenderer
+    global render
+    render = tmprender
 
     refresh()
 

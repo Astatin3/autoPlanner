@@ -6,7 +6,7 @@ curvePointCount = 300
 curvePointColor = (255, 255, 0)
 curvePointRadius = 2
 
-class pathRenderer():  
+class render():
   def __init__(self, pg, screen, offsetY):
     self.pg = pg
     self.screen = screen
@@ -35,14 +35,17 @@ class pathRenderer():
         px = p0[0]*(1-t)**2 + 2*(1-t)*t*p1[0] + p2[0]*t**2
         py = p0[1]*(1-t)**2 + 2*(1-t)*t*p1[1] + p2[1]*t**2
         self.circle(curvePointColor, (px, py), curvePointRadius)
-    
+
+  def clear(self):
+    self.pg.draw.rect(self.screen, (0, 0, 0), self.rect)
+
   def render(self, nodes, curveEditPoints):
     self.pg.draw.rect(self.screen, (0, 0, 0), self.rect)
     self.screen.blit(self.fieldImg, self.rect)
     for i in range(0,len(curveEditPoints)):
-        # self.pg.draw.line(self.screen, lineApproximationLineColor, nodes[i], curveEditPoints[i], lineApproximationLineWidth)
-        # self.pg.draw.line(self.screen, lineApproximationLineColor, curveEditPoints[i], nodes[i+1], lineApproximationLineWidth)
-        self.bezier(nodes[i], curveEditPoints[i], nodes[i+1])
-        # self.pg.draw.circle(self.screen, curveEditPointColor, curveEditPoints[i], curveEditPointRadius)
+      # self.pg.draw.line(self.screen, lineApproximationLineColor, nodes[i], curveEditPoints[i], lineApproximationLineWidth)
+      # self.pg.draw.line(self.screen, lineApproximationLineColor, curveEditPoints[i], nodes[i+1], lineApproximationLineWidth)
+      self.bezier(nodes[i], curveEditPoints[i], nodes[i+1])
+      # self.pg.draw.circle(self.screen, curveEditPointColor, curveEditPoints[i], curveEditPointRadius)
     self.pg.display.update()
   

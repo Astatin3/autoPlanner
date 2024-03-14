@@ -1,8 +1,9 @@
 pg = None
 render = None
+bottomBarHeight = 0
 
-class menu:
-  name = "Menu"
+class export:
+  name = "Export"
 
   def __init__(self, tmppg, tmprender):
     global pg
@@ -24,7 +25,7 @@ class menu:
 
   def keyDown(self, key):
     pass
-  
+
   def load(self):
     render.clear()
     pg.display.update()

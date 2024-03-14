@@ -2,11 +2,11 @@ import math
 from pygame.locals import *
 
 nodeColor = (255, 255, 255)
-nodeRadius = 15
+nodeRadius = 12
 
 rotNodeDist = 35
 rotNodeColor = (255, 0, 255)
-rotNodeRadius = 10
+rotNodeRadius = 8
 
 nodeSquareRadius = 35
 nodeSquareColor = (127, 127, 127, 0.5)
@@ -16,7 +16,7 @@ lineApproximationLineColor = (127, 127, 127, 0.5)
 lineApproximationLineWidth = 3
 
 curveEditPointColor = (0, 255, 255)
-curveEditPointRadius = 5
+curveEditPointRadius = 8
 
 nodes = []
 curveEditPoints = []
@@ -25,12 +25,13 @@ nodeRotations = []
 clickType = -1
 clickIndex = -1
 
-pg = None
 render = None
 
 
 def refresh():
-  render.render(nodes, curveEditPoints)
+  render.clear()
+  render.drawField()
+  render.renderBezier(nodes, curveEditPoints)
   
   for i in range(0,len(curveEditPoints)):
     render.line(lineApproximationLineColor, nodes[i], curveEditPoints[i], lineApproximationLineWidth)
@@ -58,20 +59,20 @@ def refresh():
   for pos in nodes:
 
     render.circle(nodeColor, pos, nodeRadius)
-  pg.display.update()
+  render.update()
 
 def getElemAt(pos):
-  for i in range(0,len(curveEditPoints)):
-    if getDist(pos, curveEditPoints[i], curveEditPointRadius):
-      return 1, i
+  for i in range(0,len(nodes)):
+    if getDist(pos, nodes[i], nodeRadius):
+      return 0, i
   for i in range(0,len(nodeRotations)):
     posX = (math.sin(nodeRotations[i])*rotNodeDist) + nodes[i][0]
     posY = (math.cos(nodeRotations[i])*rotNodeDist) + nodes[i][1]
     if getDist(pos, (posX, posY), nodeRadius):
       return 2, i
-  for i in range(0,len(nodes)):
-      if getDist(pos, nodes[i], nodeRadius):
-        return 0, i
+  for i in range(0,len(curveEditPoints)):
+    if getDist(pos, curveEditPoints[i], curveEditPointRadius):
+      return 1, i
   return -1, -1
 
 def getDist(pos1, pos2, dist):
@@ -79,12 +80,14 @@ def getDist(pos1, pos2, dist):
 
 def addNode(pos):
   nodes.append(pos)
-  nodeRotations.append(math.pi/2)
   if len(nodes) > 1:
     index = len(nodes)-1
     # Middle point between current point and previous point
     editPos = (nodes[index-1][0]+pos[0])/2,(nodes[index-1][1]+pos[1])/2
     curveEditPoints.append(editPos)
+    nodeRotations.append(nodeRotations[index-1])
+  else:
+    nodeRotations.append(math.pi/2)
   refresh()
 
 def nearestCirclePoint(center, pos, R):
@@ -102,9 +105,7 @@ def points2rad(center, pos):
 
 class pathEditor:
   name = "Path Editor"
-  def __init__(self, tmppg, tmprender):
-    global pg
-    pg = tmppg
+  def __init__(self, tmprender):
     # global screen
     # screen = tmpscreen
     global render
@@ -137,7 +138,7 @@ class pathEditor:
       refresh()
 
   def doubleClick(self, pos):
-    clickType, clickIndex = getElemAt(pg.mouse.get_pos())
+    clickType, clickIndex = getElemAt(pos)
     if clickType == -1:
       pass
     if clickType == 0:
@@ -151,4 +152,9 @@ class pathEditor:
         nodes.pop(clickIndex) 
         nodeRotations.pop(clickIndex)
         refresh()
+    
+  def keyDown(self, key):
+    pass
   
+  def load(self):
+    refresh()

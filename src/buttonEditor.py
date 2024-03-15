@@ -12,12 +12,20 @@ keyFrames = []
 
 matchLength = 15
 matchTicks = 15 * 50
-displayTickResolution = 7
+displayTickResolution = 4
 displayTicks = round(matchTicks / displayTickResolution)
 
 indicatorBarHeight = None
 
+dragFrameIndex = -1
 selFrame = -1
+
+def getPosKeyframes():
+  frames = []
+  for keyFrame in keyFrames:
+    if keyFrame['type'] == 'position':
+      frames.append(keyFrame)
+  return frames
 
 def getKeyframeAtPos(index):
   for frame in keyFrames:
@@ -33,14 +41,9 @@ def getPosKeyframeAtPos(index):
 
 def getBezierPointCounts():
   counts = []
-  dist = 0
-  for i in range(1,displayTicks):
-    frame = getPosKeyframeAtPos(i)
-    if frame == None:
-      dist += 1
-    else:
-      counts.append(dist)
-      dist = 0
+  frames = getPosKeyframes()
+  for i in range(1,len(frames)):
+    counts.append(frames[i]['timeIndex'] - frames[i-1]['timeIndex'])
   return counts
 
 def getPosKeyframeByIndex(index):
@@ -247,11 +250,12 @@ class buttonEditor:
       for i in range(len(ogNodes)):
         keyFrames.append({
           "type": "position",
-          "timeIndex": round(((i)/len(ogNodes)) * (displayTicks-1)),
+          "timeIndex": round((i)/(len(ogNodes)-1) * (displayTicks-1)),
           "index": i,
           "position": ogNodes[i],
           "rotation": ogRotNodes[i]
         })
+      # print(keyFrames)
     else:
       self.updateNodes(True)
       

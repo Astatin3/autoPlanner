@@ -2,12 +2,17 @@ import math
 from pygame.locals import *
 import numpy as np
 
-curvePointCount = 300
 curvePointColor = (255, 255, 0)
 curvePointRadius = 2
 
 selTabBorderSize = 2
 selTabBorderIndent = 3
+
+nodeSquareRadius = 35
+nodeSquareColor = (127, 127, 127, 0.5)
+nodeSquareWidth = 3
+
+nodeTickLength = 5
 
 class render():
   def __init__(self, pg, screen, topBarHeight, bottomBarHeight):
@@ -44,8 +49,30 @@ class render():
             pos[1] >= rect[1] and \
             pos[1] <= rect[1]+rect[3]
 
+  def robotSquare(self, pos, rot):
+    pos1 = ((math.sin(rot + math.pi*-0.25)*nodeSquareRadius) + pos[0],
+            (math.cos(rot + math.pi*-0.25)*nodeSquareRadius) + pos[1])
+    pos2 = ((math.sin(rot + math.pi*0.25)*nodeSquareRadius) + pos[0],
+            (math.cos(rot + math.pi*0.25)*nodeSquareRadius) + pos[1])
+    pos3 = ((math.sin(rot + math.pi*0.75)*nodeSquareRadius) + pos[0],
+            (math.cos(rot + math.pi*0.75)*nodeSquareRadius) + pos[1])
+    pos4 = ((math.sin(rot + math.pi*1.25)*nodeSquareRadius) + pos[0],
+            (math.cos(rot + math.pi*1.25)*nodeSquareRadius) + pos[1])
 
-  def bezier(self, p0, p1, p2):
+    pos5 = ((math.sin(rot)*(nodeSquareRadius+nodeTickLength)) + pos[0],
+            (math.cos(rot)*(nodeSquareRadius+nodeTickLength)) + pos[1])
+    pos6 = ((math.sin(rot)*(nodeSquareRadius-nodeTickLength)) + pos[0],
+            (math.cos(rot)*(nodeSquareRadius-nodeTickLength)) + pos[1])
+
+    self.line(nodeSquareColor, pos1, pos2, nodeSquareWidth)
+    self.line(nodeSquareColor, pos2, pos3, nodeSquareWidth)
+    self.line(nodeSquareColor, pos3, pos4, nodeSquareWidth)
+    self.line(nodeSquareColor, pos4, pos1, nodeSquareWidth)
+    
+    self.line(nodeSquareColor, pos5, pos6, nodeSquareWidth)
+
+
+  def bezier(self, p0, p1, p2, curvePointCount):
     #for p in [p0, p1, p2]:
     #    pg.draw.circle(self.screen, (255, 255, 255), p, 5)
     for t in np.arange(0, 1, 1/curvePointCount):
@@ -69,10 +96,6 @@ class render():
     for elem in self.elements:
       if elem['type'] == 'button' and self.isInRect(pos, elem['rect']):
         elem['onClick'](pos)
-
-  def renderBezier(self, nodes, curveEditPoints):
-    for i in range(0,len(curveEditPoints)):
-      self.bezier(nodes[i], curveEditPoints[i], nodes[i+1])
 
   def update(self):
     self.pg.display.update()

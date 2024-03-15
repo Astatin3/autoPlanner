@@ -8,15 +8,13 @@ rotNodeDist = 35
 rotNodeColor = (255, 0, 255)
 rotNodeRadius = 8
 
-nodeSquareRadius = 35
-nodeSquareColor = (127, 127, 127, 0.5)
-nodeSquareWidth = 3
-
 lineApproximationLineColor = (127, 127, 127, 0.5)
 lineApproximationLineWidth = 3
 
 curveEditPointColor = (0, 255, 255)
 curveEditPointRadius = 8
+
+curvePointCount = 80
 
 nodes = []
 curveEditPoints = []
@@ -31,31 +29,19 @@ render = None
 def refresh():
   render.clear()
   render.drawField()
-  render.renderBezier(nodes, curveEditPoints)
   
   for i in range(0,len(curveEditPoints)):
     render.line(lineApproximationLineColor, nodes[i], curveEditPoints[i], lineApproximationLineWidth)
     render.line(lineApproximationLineColor, curveEditPoints[i], nodes[i+1], lineApproximationLineWidth)
-    #bezier(nodes[i], curveEditPoints[i], nodes[i+1])
+    
+    render.bezier(nodes[i], curveEditPoints[i], nodes[i+1], curvePointCount)
+    
     render.circle(curveEditPointColor, curveEditPoints[i], curveEditPointRadius)
   for i in range(0,len(nodeRotations)):
     posX = (math.sin(nodeRotations[i])*rotNodeDist) + nodes[i][0]
     posY = (math.cos(nodeRotations[i])*rotNodeDist) + nodes[i][1]
     render.circle(rotNodeColor, (posX, posY), rotNodeRadius)
-
-    rect1 = ((math.sin(nodeRotations[i] + math.pi*-0.25)*nodeSquareRadius) + nodes[i][0],
-             (math.cos(nodeRotations[i] + math.pi*-0.25)*nodeSquareRadius) + nodes[i][1])
-    rect2 = ((math.sin(nodeRotations[i] + math.pi*0.25)*nodeSquareRadius) + nodes[i][0],
-             (math.cos(nodeRotations[i] + math.pi*0.25)*nodeSquareRadius) + nodes[i][1])
-    rect3 = ((math.sin(nodeRotations[i] + math.pi*0.75)*nodeSquareRadius) + nodes[i][0],
-             (math.cos(nodeRotations[i] + math.pi*0.75)*nodeSquareRadius) + nodes[i][1])
-    rect4 = ((math.sin(nodeRotations[i] + math.pi*1.25)*nodeSquareRadius) + nodes[i][0],
-             (math.cos(nodeRotations[i] + math.pi*1.25)*nodeSquareRadius) + nodes[i][1])
-
-    render.line(nodeSquareColor, rect1, rect2, nodeSquareWidth)
-    render.line(nodeSquareColor, rect2, rect3, nodeSquareWidth)
-    render.line(nodeSquareColor, rect3, rect4, nodeSquareWidth)
-    render.line(nodeSquareColor, rect4, rect1, nodeSquareWidth)
+    render.robotSquare(nodes[i], nodeRotations[i])
   for pos in nodes:
 
     render.circle(nodeColor, pos, nodeRadius)

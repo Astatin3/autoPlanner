@@ -50,35 +50,37 @@ class render():
             pos[1] <= rect[1]+rect[3]
 
   def robotSquare(self, pos, rot):
-    pos1 = ((math.sin(rot + math.pi*-0.25)*nodeSquareRadius) + pos[0],
-            (math.cos(rot + math.pi*-0.25)*nodeSquareRadius) + pos[1])
-    pos2 = ((math.sin(rot + math.pi*0.25)*nodeSquareRadius) + pos[0],
-            (math.cos(rot + math.pi*0.25)*nodeSquareRadius) + pos[1])
-    pos3 = ((math.sin(rot + math.pi*0.75)*nodeSquareRadius) + pos[0],
-            (math.cos(rot + math.pi*0.75)*nodeSquareRadius) + pos[1])
-    pos4 = ((math.sin(rot + math.pi*1.25)*nodeSquareRadius) + pos[0],
-            (math.cos(rot + math.pi*1.25)*nodeSquareRadius) + pos[1])
+    pos1 = ((math.sin(rot + math.pi*-0.25)*nodeSquareRadius/self.offsetSize) + pos[0],
+            (math.cos(rot + math.pi*-0.25)*nodeSquareRadius/self.offsetSize) + pos[1])
+    pos2 = ((math.sin(rot + math.pi*0.25)*nodeSquareRadius/self.offsetSize) + pos[0],
+            (math.cos(rot + math.pi*0.25)*nodeSquareRadius/self.offsetSize) + pos[1])
+    pos3 = ((math.sin(rot + math.pi*0.75)*nodeSquareRadius/self.offsetSize) + pos[0],
+            (math.cos(rot + math.pi*0.75)*nodeSquareRadius/self.offsetSize) + pos[1])
+    pos4 = ((math.sin(rot + math.pi*1.25)*nodeSquareRadius/self.offsetSize) + pos[0],
+            (math.cos(rot + math.pi*1.25)*nodeSquareRadius/self.offsetSize) + pos[1])
 
-    pos5 = ((math.sin(rot)*(nodeSquareRadius+nodeTickLength)) + pos[0],
-            (math.cos(rot)*(nodeSquareRadius+nodeTickLength)) + pos[1])
-    pos6 = ((math.sin(rot)*(nodeSquareRadius-nodeTickLength)) + pos[0],
-            (math.cos(rot)*(nodeSquareRadius-nodeTickLength)) + pos[1])
+    pos5 = ((math.sin(rot)*(nodeSquareRadius+nodeTickLength)/self.offsetSize) + pos[0],
+            (math.cos(rot)*(nodeSquareRadius+nodeTickLength)/self.offsetSize) + pos[1])
+    pos6 = ((math.sin(rot)*(nodeSquareRadius-nodeTickLength)/self.offsetSize) + pos[0],
+            (math.cos(rot)*(nodeSquareRadius-nodeTickLength)/self.offsetSize) + pos[1])
 
-    self.line(nodeSquareColor, pos1, pos2, nodeSquareWidth)
-    self.line(nodeSquareColor, pos2, pos3, nodeSquareWidth)
-    self.line(nodeSquareColor, pos3, pos4, nodeSquareWidth)
-    self.line(nodeSquareColor, pos4, pos1, nodeSquareWidth)
+    self.line(nodeSquareColor, pos1, pos2, nodeSquareWidth*self.offsetSize)
+    self.line(nodeSquareColor, pos2, pos3, nodeSquareWidth*self.offsetSize)
+    self.line(nodeSquareColor, pos3, pos4, nodeSquareWidth*self.offsetSize)
+    self.line(nodeSquareColor, pos4, pos1, nodeSquareWidth*self.offsetSize)
     
-    self.line(nodeSquareColor, pos5, pos6, nodeSquareWidth)
+    self.line(nodeSquareColor, pos5, pos6, nodeSquareWidth*self.offsetSize)
 
 
   def bezier(self, p0, p1, p2, curvePointCount):
     #for p in [p0, p1, p2]:
     #    pg.draw.circle(self.screen, (255, 255, 255), p, 5)
     for t in np.arange(0, 1, 1/curvePointCount):
-        px = p0[0]*(1-t)**2 + 2*(1-t)*t*p1[0] + p2[0]*t**2
-        py = p0[1]*(1-t)**2 + 2*(1-t)*t*p1[1] + p2[1]*t**2
-        self.circle(curvePointColor, (px, py), curvePointRadius)
+      px = p0[0]*(1-t)**2 + 2*(1-t)*t*p1[0] + p2[0]*t**2
+      py = p0[1]*(1-t)**2 + 2*(1-t)*t*p1[1] + p2[1]*t**2
+      self.circle(curvePointColor, (px, py), curvePointRadius)
+    self.circle(curvePointColor, p2, curvePointRadius)
+        #self.drawrect(curvePointColor, (round(px+0.5), round(py+0.5), curvePointRadius, curvePointRadius))
 
   def clear(self):
     self.pg.draw.rect(self.screen, (0, 0, 0), self.rect)

@@ -1,6 +1,5 @@
 pg = None
 render = None
-bottomBarHeight = 0
 
 class export:
   name = "Export"

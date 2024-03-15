@@ -38,8 +38,8 @@ def refresh():
     
     render.circle(curveEditPointColor, curveEditPoints[i], curveEditPointRadius)
   for i in range(0,len(nodeRotations)):
-    posX = (math.sin(nodeRotations[i])*rotNodeDist) + nodes[i][0]
-    posY = (math.cos(nodeRotations[i])*rotNodeDist) + nodes[i][1]
+    posX = (math.sin(nodeRotations[i])*rotNodeDist/render.offsetSize) + nodes[i][0]
+    posY = (math.cos(nodeRotations[i])*rotNodeDist/render.offsetSize) + nodes[i][1]
     render.circle(rotNodeColor, (posX, posY), rotNodeRadius)
     render.robotSquare(nodes[i], nodeRotations[i])
   for pos in nodes:
@@ -52,8 +52,8 @@ def getElemAt(pos):
     if getDist(pos, nodes[i], nodeRadius):
       return 0, i
   for i in range(0,len(nodeRotations)):
-    posX = (math.sin(nodeRotations[i])*rotNodeDist) + nodes[i][0]
-    posY = (math.cos(nodeRotations[i])*rotNodeDist) + nodes[i][1]
+    posX = (math.sin(nodeRotations[i])*rotNodeDist/render.offsetSize) + nodes[i][0]
+    posY = (math.cos(nodeRotations[i])*rotNodeDist/render.offsetSize) + nodes[i][1]
     if getDist(pos, (posX, posY), nodeRadius):
       return 2, i
   for i in range(0,len(curveEditPoints)):
@@ -120,14 +120,14 @@ class pathEditor:
       if clickType == 1:
           curveEditPoints[clickIndex] = pos
       if clickType == 2:
-          nodeRotations[clickIndex] = points2rad(nodes[clickIndex], nearestCirclePoint(nodes[clickIndex], pos, rotNodeDist))
+          nodeRotations[clickIndex] = points2rad(nodes[clickIndex], nearestCirclePoint(nodes[clickIndex], pos, rotNodeDist/render.offsetSize))
       refresh()
 
   def doubleClick(self, pos):
     clickType, clickIndex = getElemAt(pos)
     if clickType == -1:
       pass
-    if clickType == 0:
+    elif clickType == 0:
         if clickIndex > 0:
           if clickIndex < len(nodes)-1:
             newPos = (nodes[clickIndex-1][0]+nodes[clickIndex][0])/2,(nodes[clickIndex-1][1]+nodes[clickIndex][1])/2

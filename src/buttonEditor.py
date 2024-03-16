@@ -20,15 +20,31 @@ ogDragFramePos = -1
 
 selFrame = -1
 
+buttonImages = {}
+buttonMode = False
 
+buttonPositions = {
+  'A': ((1089,494),100),
+  'B': ((1187,404),100),
+  'X': ((996,411),100),
+  'Y': ((1093,321),100),
+  
+  'Dpad': ((549,619),220),
+  
+  'Menu': ((832,411),100),
+  'Windows': ((629,411),100),
+  
+  'Left_Stick': ((375,422),150),
+  'Right_Stick': ((914,622),150),
+  
+  'LB': ((352,184),150),
+  'RB': ((1100,184),150),
+  
+  'LT': ((356,67),150),
+  'RT': ((1096,67),150)
+}
 
-def getPosKeyframes():
-  frames = []
-  for keyFrame in keyFrames:
-    if keyFrame['type'] == 'position':
-      frames.append(keyFrame)
-  return frames
-
+controllerCount = 2
 
 
 def getKeyframeAtPos(index):
@@ -39,11 +55,27 @@ def getKeyframeAtPos(index):
 
 
 
+def getFrameIndex(frame):
+  if frame == None:
+    return -1
+  return keyFrames.index(frame)
+
+
+
 def getPosKeyframeAtPos(index):
   for frame in keyFrames:
     if frame["timeIndex"] == index and frame['type'] == 'position':
       return frame
   return None
+
+
+
+def getPosKeyframes():
+  frames = []
+  for keyFrame in keyFrames:
+    if keyFrame['type'] == 'position':
+      frames.append(keyFrame)
+  return frames
 
 
 
@@ -61,13 +93,6 @@ def getPosKeyframeByIndex(index):
     if frame["index"] == index and frame['type'] == 'position':
       return frame
   return None
-
-
-
-def getFrameIndex(frame):
-  if frame == None:
-    return -1
-  return keyFrames.index(frame)
 
 
 
@@ -214,6 +239,82 @@ def clickBar(pos, doubleClick):
         })
       return
     
+# def getControllerRects():
+#   rects = []
+#   for i in range(controllerCount):
+#     rects.append()
+
+def renderXboxControllers():
+  for rect in controllerRects:
+      
+    offsetSize = rect[2]/buttonImages['Controller'].get_width()
+  
+    def offsetControllerButton(index):
+      pos, size = buttonPositions[index]
+      rect2 = ((pos[0]-(size/2), pos[1]-(size/2), size, size))
+      return (rect[0]+(rect2[0])*offsetSize,rect[1]+(rect2[1])*offsetSize,rect2[2]*offsetSize,rect2[2]*offsetSize)
+    
+    
+    render.image(buttonImages['Controller'], rect)
+    
+    render.image(buttonImages['A'], offsetControllerButton('A'))
+    render.image(buttonImages['B'], offsetControllerButton('B'))
+    render.image(buttonImages['X'], offsetControllerButton('X'))
+    render.image(buttonImages['Y'], offsetControllerButton('Y'))
+    
+    render.image(buttonImages['Dpad'], offsetControllerButton('Dpad'))
+    
+    render.image(buttonImages['Menu'], offsetControllerButton('Menu'))
+    render.image(buttonImages['Windows'], offsetControllerButton("Windows"))
+    
+    render.image(buttonImages['Left_Stick'], offsetControllerButton('Left_Stick'))
+    render.image(buttonImages['Right_Stick'], offsetControllerButton('Right_Stick'))
+    
+    
+    render.image(buttonImages['LB'], offsetControllerButton('LB'))
+    render.image(buttonImages['RB'], offsetControllerButton('RB'))
+    
+    render.image(buttonImages['LT'], offsetControllerButton("LT"))
+    render.image(buttonImages['RT'], offsetControllerButton('RT'))
+  
+def controllerClick(pos):
+  for rect in controllerRects:
+  
+    offsetSize = rect[2]/buttonImages['Controller'].get_width()
+  
+    def offsetControllerButton(index):
+      pos, size = buttonPositions[index]
+      rect2 = ((pos[0]-(size/2), pos[1]-(size/2), size, size))
+      return (rect[0]+(rect2[0])*offsetSize,rect[1]+(rect2[1])*offsetSize,rect2[2]*offsetSize,rect2[2]*offsetSize)
+  
+
+    if render.isInRect(pos, offsetControllerButton('A')):
+      print('A!')
+    elif render.isInRect(pos, offsetControllerButton('B')):
+      pass
+    elif render.isInRect(pos, offsetControllerButton('X')):
+      pass
+    elif render.isInRect(pos, offsetControllerButton('Y')):
+      pass
+    elif render.isInRect(pos, offsetControllerButton('Dpad')):
+      pass
+    elif render.isInRect(pos, offsetControllerButton('Menu')):
+      pass
+    elif render.isInRect(pos, offsetControllerButton('Windows')):
+      pass
+    elif render.isInRect(pos, offsetControllerButton('Left_Stick')):
+      pass
+    elif render.isInRect(pos, offsetControllerButton('Right_Stick')):
+      pass
+    elif render.isInRect(pos, offsetControllerButton('LB')):
+      pass
+    elif render.isInRect(pos, offsetControllerButton('RB')):
+      pass
+    elif render.isInRect(pos, offsetControllerButton('LT')):
+      pass
+    elif render.isInRect(pos, offsetControllerButton('RT')):
+      pass
+
 class buttonEditor:
   name = "Button Editor"
 
@@ -229,31 +330,75 @@ class buttonEditor:
     global bottomBarRect
     bottomBarRect = (0, (render.screen.get_height()-render.bottomBarHeight), render.screen.get_width(), render.bottomBarHeight)
 
+    global buttonImages
+    buttonImages = {
+      "Controller": render.pg.image.load('images/XboxOne_Diagram_Simple.png').convert_alpha(),
+      
+      "A": render.pg.image.load('images/XboxOne_A.png').convert_alpha(),
+      "B": render.pg.image.load('images/XboxOne_B.png').convert_alpha(),
+      "X": render.pg.image.load('images/XboxOne_X.png').convert_alpha(),
+      "Y": render.pg.image.load('images/XboxOne_Y.png').convert_alpha(),
+      
+      "Dpad": render.pg.image.load('images/XboxOne_Dpad.png').convert_alpha(),
+      "Dpad_Up": render.pg.image.load('images/XboxOne_Dpad_Up.png').convert_alpha(),
+      "Dpad_Down": render.pg.image.load('images/XboxOne_Dpad_Down.png').convert_alpha(),
+      "Dpad_Left": render.pg.image.load('images/XboxOne_Dpad_Left.png').convert_alpha(),
+      "Dpad_Right": render.pg.image.load('images/XboxOne_Dpad_Right.png').convert_alpha(),
+      
+      "Menu": render.pg.image.load('images/XboxOne_Menu.png').convert_alpha(),
+      "Windows": render.pg.image.load('images/XboxOne_Windows.png').convert_alpha(),
+      
+      "Left_Stick": render.pg.image.load('images/XboxOne_Left_Stick.png').convert_alpha(),
+      "Left_Stick_Click": render.pg.image.load('images/XboxOne_Left_Stick_Click.png').convert_alpha(),
+      "Right_Stick": render.pg.image.load('images/XboxOne_Right_Stick.png').convert_alpha(),
+      "Right_Stick_Click": render.pg.image.load('images/XboxOne_Right_Stick_Click.png').convert_alpha(),
+      
+      
+      "LB": render.pg.image.load('images/XboxOne_LB.png').convert_alpha(),
+      "RB": render.pg.image.load('images/XboxOne_RB.png').convert_alpha(),
+      "LT": render.pg.image.load('images/XboxOne_LT.png').convert_alpha(),
+      "RT": render.pg.image.load('images/XboxOne_RT.png').convert_alpha()
+      
+    }
     
+    ControllerSize = (render.width/2, render.width*(buttonImages['Controller'].get_height()/buttonImages['Controller'].get_width())/2)
+    ControllerYOffset = (render.height-ControllerSize[1])/2
+    global controllerRects
+    controllerRects = {
+      (0, render.topBarHeight+ControllerYOffset, ControllerSize[0], ControllerSize[1]),
+      (ControllerSize[0], render.topBarHeight+ControllerYOffset, ControllerSize[0], ControllerSize[1])
+    }
 
   def refresh(self):
-    global ogNodes
-    global ogCtrlNodes
-    global ogRotNodes
-    
     render.clear()
-    render.drawField()
-    
-    pointCounts = getBezierPointCounts()
-    for i in range(0,len(ogCtrlNodes)):
-      render.bezier(ogNodes[i], ogCtrlNodes[i], ogNodes[i+1], pointCounts[i])
-    
-    if selFrame != -1 and len(ogNodes) > 0:
-      pos, rot = getRobotAtIndex(selFrame)
-      render.robotSquare(pos, rot)
-    
+    if not buttonMode:
+      global ogNodes
+      global ogCtrlNodes
+      global ogRotNodes
+      
+      render.drawField()
+      
+      pointCounts = getBezierPointCounts()
+      for i in range(0,len(ogCtrlNodes)):
+        render.bezier(ogNodes[i], ogCtrlNodes[i], ogNodes[i+1], pointCounts[i])
+      
+      if selFrame != -1 and len(ogNodes) > 0:
+        pos, rot = getRobotAtIndex(selFrame)
+        render.robotSquare(pos, rot)
+    else:
+      renderXboxControllers()
+      
+      
     reloadBar((0,0))
     render.update()
           
     
 
   def mouseDown(self, pos):
-    if pos[1] > bottomBarRect[1]:
+    if buttonMode:
+      controllerClick(pos)
+      self.refresh()
+    elif pos[1] > bottomBarRect[1]:
       clickBar(pos, False)
       self.refresh()
 
@@ -292,6 +437,10 @@ class buttonEditor:
     elif key == render.pg.K_RIGHT and selFrame < displayTicks-1:
       selFrame += 1
       self.refresh()
+    elif key == render.pg.K_e:
+      global buttonMode
+      buttonMode = not buttonMode
+      self.refresh()  
         
     
 

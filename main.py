@@ -47,6 +47,9 @@ def addTab(i):
         global tabIndex
         return tabIndex == i
     
+    def getIsVisible():
+        return True
+    
     def onClick(pos):
         global tabIndex
         tabIndex = i
@@ -54,7 +57,7 @@ def addTab(i):
         render.renderElements(pos)
         pg.display.update()
     
-    render.addButton(rect, tabs[i].name, getIsSelected, onClick)
+    render.addButton(rect, tabs[i].name, getIsSelected, getIsVisible, onClick)
             
 for i in range(len(tabs)):
     addTab(i)
@@ -97,6 +100,10 @@ while running:
 
         elif event.type == pg.KEYDOWN:
             tabs[tabIndex].keyDown(event.key)
+            if event.key == pg.K_TAB:
+                tabIndex = (tabIndex + 1) % len(tabs)
+                tabs[tabIndex].load()
+                render.renderElements(pg.mouse.get_pos())
 
         elif event.type == pg.QUIT:
             running = False

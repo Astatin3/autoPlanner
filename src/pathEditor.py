@@ -26,6 +26,8 @@ clickIndex = -1
 render = None
 
 
+
+
 def refresh():
   render.clear()
   render.drawField()
@@ -47,6 +49,8 @@ def refresh():
     render.circle(nodeColor, pos, nodeRadius)
   render.update()
 
+
+
 def getElemAt(pos):
   for i in range(0,len(nodes)):
     if getDist(pos, nodes[i], nodeRadius):
@@ -61,8 +65,12 @@ def getElemAt(pos):
       return 1, i
   return -1, -1
 
+
+
 def getDist(pos1, pos2, dist):
   return math.sqrt(math.pow(pos1[0]-pos2[0], 2) + math.pow(pos1[1]-pos2[1], 2)) <= dist
+
+
 
 def addNode(pos):
   nodes.append(pos)
@@ -76,6 +84,8 @@ def addNode(pos):
     nodeRotations.append(math.pi/2)
   refresh()
 
+
+
 def nearestCirclePoint(center, pos, R):
   vX = pos[0] - center[0]
   vY = pos[1] - center[1]
@@ -84,6 +94,8 @@ def nearestCirclePoint(center, pos, R):
   aY = center[1] + vY / magV * R
   return (aX, aY)
 
+
+
 def points2rad(center, pos):
   diffX = center[0] - pos[0]
   diffY = center[1] - pos[1]
@@ -91,6 +103,8 @@ def points2rad(center, pos):
 
 class pathEditor:
   name = "Path Editor"
+  
+
   def __init__(self, tmprender):
     # global screen
     # screen = tmpscreen
@@ -99,29 +113,37 @@ class pathEditor:
 
     refresh()
 
+
+
   def mouseDown(self, pos):
     global clickType
     global clickIndex
     clickType, clickIndex = getElemAt(pos)
     if clickType == -1:
       addNode(pos)
-  
+    
+    
+
   def mouseUp(self, pos):
     global clickType
     global clickIndex
     if clickType != -1:
       clickType = -1
       clickIndex = -1
-  
+
+    
+
   def mouseMove(self, pos):
     if clickType != -1:
       if clickType == 0:
-          nodes[clickIndex] = pos
+        nodes[clickIndex] = pos
       if clickType == 1:
-          curveEditPoints[clickIndex] = pos
+        curveEditPoints[clickIndex] = pos
       if clickType == 2:
-          nodeRotations[clickIndex] = points2rad(nodes[clickIndex], nearestCirclePoint(nodes[clickIndex], pos, rotNodeDist/render.offsetSize))
+        nodeRotations[clickIndex] = points2rad(nodes[clickIndex], nearestCirclePoint(nodes[clickIndex], pos, rotNodeDist/render.offsetSize))
       refresh()
+
+    
 
   def doubleClick(self, pos):
     clickType, clickIndex = getElemAt(pos)
@@ -139,8 +161,12 @@ class pathEditor:
         nodeRotations.pop(clickIndex)
         refresh()
     
+
+
   def keyDown(self, key):
     pass
-  
+    
+    
+
   def load(self):
     refresh()

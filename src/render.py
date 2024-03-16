@@ -15,6 +15,8 @@ nodeSquareWidth = 3
 nodeTickLength = 5
 
 class render():
+  
+
   def __init__(self, pg, screen, topBarHeight, bottomBarHeight):
     self.pg = pg
     self.screen = screen
@@ -28,26 +30,45 @@ class render():
     
     self.font = self.pg.font.Font(None, 25)
 
-    self.fieldImg = pg.image.load("frc2024.png").convert_alpha()
+    self.fieldImg = pg.image.load("images/Field.png").convert_alpha()
     self.offsetSize = self.fieldImg.get_width() / self.width
     self.fieldImg = pg.transform.scale(self.fieldImg, (self.width, self.height))
     
     self.elements = []
     
+  def invert(img):
+    inv = pygame.Surface(img.get_rect().size, pygame.SRCALPHA)
+    inv.fill((255,255,255,255))
+    inv.blit(img, (0,0), None, BLEND_RGB_SUB)
+    return inv
+
   def line(self, color, pos1, pos2, width):
-     self.pg.draw.line(self.screen, color, pos1, pos2, round(width/self.offsetSize))
+    self.pg.draw.line(self.screen, color, pos1, pos2, round(width/self.offsetSize))
+
+  
 
   def circle(self, color, pos, radius):
-     self.pg.draw.circle(self.screen, color, pos, radius/self.offsetSize)
+    self.pg.draw.circle(self.screen, color, pos, radius/self.offsetSize)
+
+  
 
   def drawrect(self, color, rect):
-     self.pg.draw.rect(self.screen, color, rect)
+    self.pg.draw.rect(self.screen, color, rect)
+
+  
 
   def isInRect(self, pos, rect):
     return pos[0] >= rect[0] and \
             pos[0] <= rect[0]+rect[2] and \
             pos[1] >= rect[1] and \
             pos[1] <= rect[1]+rect[3]
+
+
+
+  def image(self, img, rect):
+    self.screen.blit(self.pg.transform.scale(img, (rect[2], rect[3])), rect)
+  
+
 
   def robotSquare(self, pos, rot):
     pos1 = ((math.sin(rot + math.pi*-0.25)*nodeSquareRadius/self.offsetSize) + pos[0],
@@ -72,6 +93,8 @@ class render():
     self.line(nodeSquareColor, pos5, pos6, nodeSquareWidth*self.offsetSize)
 
 
+  
+
   def bezier(self, p0, p1, p2, curvePointCount):
     #for p in [p0, p1, p2]:
     #    pg.draw.circle(self.screen, (255, 255, 255), p, 5)
@@ -82,35 +105,50 @@ class render():
     self.circle(curvePointColor, p2, curvePointRadius)
         #self.drawrect(curvePointColor, (round(px+0.5), round(py+0.5), curvePointRadius, curvePointRadius))
 
+  
+
   def clear(self):
     self.pg.draw.rect(self.screen, (0, 0, 0), self.rect)
+
+  
 
   def drawField(self):
     self.screen.blit(self.fieldImg, self.rect)
 
+  
+
   def renderElements(self, pos):
     for elem in self.elements:
-      if elem['type'] == 'button':
+      if elem['type'] == 'button' and elem['getIsVisible']():
         # print(elem['getIsSelected']())
         self.renderButton(elem['rect'], elem['text'], elem['getIsSelected'](), pos)
+
+  
 
   def clickElement(self, pos):
     for elem in self.elements:
       if elem['type'] == 'button' and self.isInRect(pos, elem['rect']):
         elem['onClick'](pos)
 
+  
+
   def update(self):
     self.pg.display.update()
   
-  def addButton(self, rect, text, getIsSelected, onClick):
+  
+
+  def addButton(self, rect, text, getIsSelected, getIsVisible, onClick):
     self.elements.append({
       "type": "button",
       "text": text,
       "getIsSelected": getIsSelected,
+      "getIsVisible": getIsVisible,
       "onClick": onClick,
       "rect": rect
     })
   
+  
+
   def renderButton(self, rect, text, selected, mousePos):
     
     # print(isInRect(mousePos, rect))

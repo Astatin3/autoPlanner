@@ -17,6 +17,9 @@ matchTicks = 15 * 50
 displayTickResolution = 4
 displayTicks = round(matchTicks / displayTickResolution)
 
+buttonEditColor = (191,0,191)
+buttonEditNodeRadius = 6
+
 dragFrameIndex = -1
 ogDragFramePos = -1
 
@@ -80,6 +83,15 @@ def getPosKeyframes():
 
 
 
+def getButtonKeyframes():
+  frames = []
+  for keyFrame in keyFrames:
+    if keyFrame['type'] == 'controller':
+      frames.append(keyFrame)
+  return frames
+
+
+
 def getBezierPointCounts():
   counts = []
   frames = getPosKeyframes()
@@ -91,7 +103,7 @@ def getBezierPointCounts():
 
 def getPosKeyframeByIndex(index):
   for frame in keyFrames:
-    if frame["index"] == index and frame['type'] == 'position':
+    if frame['type'] == 'position' and frame["index"] == index:
       return frame
   return None
 
@@ -177,16 +189,16 @@ def getRobotAtIndex(index):
     
 
 
-def getTimeBarColor(index):
-  frame = getKeyframeAtPos(index)
-  if frame == None:
-    return (0,0,0)
-  if frame['type'] == 'position':
-    return (127,127,0)
-  elif frame['type'] == 'controller':
-    return (127,0,127)
+# def getTimeBarColor(index):
+#   frame = getKeyframeAtPos(index)
+#   if frame == None:
+#     return (0,0,0)
+#   if frame['type'] == 'position':
+#     return (127,127,0)
+#   elif frame['type'] == 'controller':
+#     return buttonEditColor
       
-  return (16,16,32)
+#   return (16,16,32)
 
 
 
@@ -205,7 +217,7 @@ def reloadBar(pos):
     x2 = (render.width/(displayTicks))
     rect = (x1, bottomBarRect[1], x2, bottomBarRect[3])
     
-    color = getTimeBarColor(i)
+    color = (0, 0, 0)
     
     if i == selFrame:
       color = (color[0]+64,color[1]+64,color[2]+64)
@@ -231,6 +243,15 @@ def reloadBar(pos):
     else:
       color = (color[0]+16+(toggle*16),color[1]+16+(toggle*16),color[2]+32+(toggle*16))
       
+      
+    frame = getKeyframeAtPos(i)
+    if frame == None:
+      pass
+    elif frame['type'] == 'position':
+      color = (191,191,0)
+    elif frame['type'] == 'controller':
+      color = buttonEditColor
+    
     toggle = not toggle
     
     render.drawrect(color, rect)
@@ -345,7 +366,7 @@ def renderXboxControllers():
     
     btns = getControllerButtons(i)
     
-    for btn in ['A','B','X','Y','Menu','Windows','LB','RB','LT','RT']:
+    for btn in ['A','B','X','Y','Menu','Windows','LB','RB','LT','RT','Left_Stick','Right_Stick']:
       if btns[btn]:
         render.image(render.invert(buttonImages[btn]), offsetControllerButton(btn))
       else:
@@ -365,7 +386,7 @@ def controllerClick(pos):
       rect2 = ((pos[0]-(size/2), pos[1]-(size/2), size, size))
       return (rect[0]+(rect2[0])*offsetSize,rect[1]+(rect2[1])*offsetSize,rect2[2]*offsetSize,rect2[2]*offsetSize)
 
-    for btn in ['A','B','X','Y','Menu','Windows','LB','RB','LT','RT']:
+    for btn in ['A','B','X','Y','Menu','Windows','LB','RB','LT','RT','Left_Stick','Right_Stick']:
       if render.isInRect(pos, offsetControllerButton(btn)):
         toggleControllerButton(btn, i)
 
@@ -436,9 +457,16 @@ class buttonEditor:
       for i in range(0,len(ogCtrlNodes)):
         render.bezier(ogNodes[i], ogCtrlNodes[i], ogNodes[i+1], pointCounts[i])
       
+      buttonFrames = getButtonKeyframes()
+      for frame in buttonFrames:
+        pos, rot = getRobotAtIndex(frame['timeIndex'])
+        render.circle(buttonEditColor, pos, buttonEditNodeRadius)
+            
       if selFrame != -1 and len(ogNodes) > 0:
         pos, rot = getRobotAtIndex(selFrame)
         render.robotSquare(pos, rot)
+      
+      
     else:
       renderXboxControllers()
       
@@ -536,11 +564,8 @@ class buttonEditor:
       global keyFrames
       
       for i in range(len(keyFrames)-1,-1,-1):
-        print(i)
         if keyFrames[i]['type'] == 'position':
           keyFrames.pop(i)
-      
-      print('end')
       
       self.updateNodes(False)
       

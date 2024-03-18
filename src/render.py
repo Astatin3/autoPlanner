@@ -64,6 +64,17 @@ class render():
 
   def drawrect(self, color, rect):
     self.pg.draw.rect(self.screen, color, rect)
+    
+    
+    
+  # def drawText(self, text, color,):
+    
+  #   text = self.font.render(text, True, color)
+    
+  #   rect = text.get_rect()
+    
+  #   self.screen.blit(text, rect)
+  #   # text_rect = text.get_rect(center=(rect[0]+(rect[2]/2), rect[1]+(rect[3]/2)))
 
   
 

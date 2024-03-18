@@ -6,6 +6,8 @@ render = None
 pathEditor = None
 bottomBarRect = None
 
+# leftSide = True
+
 ogNodes = []
 ogCtrlNodes = []
 ogRotNodes = []
@@ -13,7 +15,9 @@ ogRotNodes = []
 keyFrames = []
 
 matchLength = 15
-matchTicks = 15 * 50
+TPS = 50
+
+matchTicks = matchLength * TPS
 displayTickResolution = 4
 displayTicks = round(matchTicks / displayTickResolution)
 
@@ -389,6 +393,29 @@ def controllerClick(pos):
     for btn in ['A','B','X','Y','Menu','Windows','LB','RB','LT','RT','Left_Stick','Right_Stick']:
       if render.isInRect(pos, offsetControllerButton(btn)):
         toggleControllerButton(btn, i)
+        
+        
+
+
+def renderTimeText():
+  if selFrame == -1:
+    return
+  seconds = round((((selFrame*displayTickResolution)+1)/matchTicks)*matchLength,2)
+  text = f'{str(seconds)} s / {str(matchLength)}.0 s'
+
+  text = render.font.render(text, True, (255,255,255))
+  
+  # global leftSide
+  
+  # if leftSide:
+  #   rect = text.get_rect(bottomright=(render.width,render.height+render.topBarHeight))
+  # else:
+  rect = text.get_rect(bottomleft=(0,render.height+render.topBarHeight))
+  
+  render.screen.blit(text, rect)
+
+
+
 
 class buttonEditor:
   name = "Button Editor"
@@ -470,6 +497,7 @@ class buttonEditor:
     else:
       renderXboxControllers()
       
+    renderTimeText()
       
     reloadBar((0,0))
     render.update()
@@ -500,15 +528,25 @@ class buttonEditor:
     global dragFrameIndex
     if dragFrameIndex != -1 or pos[1] > bottomBarRect[1]:
       reloadBar(pos)
+    
+    # global leftSide
+      
+    # if leftSide and pos[0] > (render.width/2):
+    #   leftSide = False
+    #   self.refresh()
+    # if not leftSide and pos[0] < (render.width/2):
+    #   leftSide = True
+    #   self.refresh()
+
     # if pos[1] > bottomBarRect[1]:
 
     
 
   def doubleClick(self, pos):
-    if pos[1] > bottomBarRect[1]:
-      clickBar(pos)
-      self.refresh()
-
+    pass
+    # if pos[1] > bottomBarRect[1]:
+    #   clickBar(pos)
+    #   self.refresh()
     
 
   def keyDown(self, key):

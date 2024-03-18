@@ -9,6 +9,8 @@ class export:
     pg = tmppg
     global render
     render = tmprender
+    
+    # render.addButton()
 
   def mouseDown(self, pos):
     pass

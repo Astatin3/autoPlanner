@@ -1,4 +1,5 @@
 import math
+import os
 from pygame.locals import *
 import numpy as np
 
@@ -13,6 +14,15 @@ nodeSquareColor = (127, 127, 127, 0.5)
 nodeSquareWidth = 3
 
 nodeTickLength = 5
+
+def resource_path(relative_path):
+  try:
+    base_path = sys._MEIPASS
+  except Exception:
+    base_path = os.path.abspath(".")
+
+  return os.path.join(base_path, relative_path)
+
 
 class render():
   
@@ -30,14 +40,14 @@ class render():
     
     self.font = self.pg.font.Font(None, 25)
 
-    self.fieldImg = pg.image.load("images/Field.png").convert_alpha()
+    self.fieldImg = self.loadImg("images/Field.png")
     self.offsetSize = self.fieldImg.get_width() / self.width
     self.fieldImg = pg.transform.scale(self.fieldImg, (self.width, self.height))
     
     self.elements = []
     
-  def invert(img):
-    inv = pygame.Surface(img.get_rect().size, pygame.SRCALPHA)
+  def invert(self, img):
+    inv = self.pg.Surface(img.get_rect().size, self.pg.SRCALPHA)
     inv.fill((255,255,255,255))
     inv.blit(img, (0,0), None, BLEND_RGB_SUB)
     return inv
@@ -67,6 +77,11 @@ class render():
 
   def image(self, img, rect):
     self.screen.blit(self.pg.transform.scale(img, (rect[2], rect[3])), rect)
+  
+  
+  
+  def loadImg(self, path):
+    return self.pg.image.load(resource_path(path)).convert_alpha()
   
 
 

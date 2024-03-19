@@ -7,7 +7,7 @@ from sys import exit
 import numpy as np
 
 import src.render as render
-import src.menu as menu
+
 import src.pathEditor as pathEditor
 import src.buttonEditor as buttonEditor
 import src.export as export
@@ -30,7 +30,6 @@ render = render.render(pg, screen, topBarHeight, bottomBarHeight)
 
 tabIndex = 0
 tabs = [
-    menu.menu(pg, render),
     pathEditor.pathEditor(render),
     buttonEditor.buttonEditor(render, pathEditor),
     export.export(pg, render)

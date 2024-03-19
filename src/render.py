@@ -1,5 +1,6 @@
 import math
 import os
+import sys
 from pygame.locals import *
 import numpy as np
 
@@ -15,7 +16,7 @@ nodeSquareWidth = 3
 
 nodeTickLength = 5
 
-def resource_path(relative_path):
+def image_path(relative_path):
   try:
     base_path = sys._MEIPASS
   except Exception:
@@ -46,11 +47,16 @@ class render():
     
     self.elements = []
     
+    
+    
+    
   def invert(self, img):
     inv = self.pg.Surface(img.get_rect().size, self.pg.SRCALPHA)
-    inv.fill((255,255,255,255))
+    inv.fill((255,255,255))
     inv.blit(img, (0,0), None, BLEND_RGB_SUB)
     return inv
+  
+  
 
   def line(self, color, pos1, pos2, width):
     self.pg.draw.line(self.screen, color, pos1, pos2, round(width/self.offsetSize))
@@ -92,7 +98,7 @@ class render():
   
   
   def loadImg(self, path):
-    return self.pg.image.load(resource_path(path)).convert_alpha()
+    return self.pg.image.load(image_path(path)).convert_alpha()
   
 
 

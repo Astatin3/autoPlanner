@@ -6,7 +6,7 @@ render = None
 pathEditor = None
 bottomBarRect = None
 
-# leftSide = True
+# leftSidee = True
 
 ogNodes = []
 ogCtrlNodes = []
@@ -39,6 +39,11 @@ buttonPositions = {
   'Y': ((1093,321),100),
   
   'Dpad': ((549,619),220),
+  
+  'Dpad_Up': ((549,561),70),
+  'Dpad_Down': ((549,677),70),
+  'Dpad_Left': ((485,619),70),
+  'Dpad_Right': ((607,619),70),
   
   'Menu': ((832,411),100),
   'Windows': ((629,411),100),
@@ -335,10 +340,10 @@ def toggleControllerButton(btnStr, controllerIndex):
   # Dpad Stuff
   elif frame['controllers'][controllerIndex][btnStr] == True:
     for btn in ['Dpad_Up', 'Dpad_Down', 'Dpad_Left', 'Dpad_Right']:
-      frame['controllers'][controllerIndex][btn] == False
+      frame['controllers'][controllerIndex][btn] = False
   else:
     for btn in ['Dpad_Up', 'Dpad_Down', 'Dpad_Left', 'Dpad_Right']:
-      frame['controllers'][controllerIndex][btn] == False
+      frame['controllers'][controllerIndex][btn] = False
     frame['controllers'][controllerIndex][btnStr] = True
   
   
@@ -375,6 +380,22 @@ def renderXboxControllers():
         render.image(render.invert(buttonImages[btn]), offsetControllerButton(btn))
       else:
         render.image(buttonImages[btn], offsetControllerButton(btn))
+
+    if btns['Dpad_Up']:
+      render.image(buttonImages['Dpad_Up'], offsetControllerButton('Dpad'))
+    elif btns['Dpad_Down']:
+      render.image(buttonImages['Dpad_Down'], offsetControllerButton('Dpad'))
+    elif btns['Dpad_Left']:
+      render.image(buttonImages['Dpad_Left'], offsetControllerButton('Dpad'))
+    elif btns['Dpad_Right']:
+      render.image(buttonImages['Dpad_Right'], offsetControllerButton('Dpad'))
+    else:
+      render.image(buttonImages['Dpad'], offsetControllerButton('Dpad'))
+      
+
+    # for btn in ['Dpad_Up','Dpad_Down','Dpad_Left','Dpad_Right']:
+    #   if
+    #   render.drawrect((255,255,255), offsetControllerButton(btn))
   
   
   
@@ -390,7 +411,7 @@ def controllerClick(pos):
       rect2 = ((pos[0]-(size/2), pos[1]-(size/2), size, size))
       return (rect[0]+(rect2[0])*offsetSize,rect[1]+(rect2[1])*offsetSize,rect2[2]*offsetSize,rect2[2]*offsetSize)
 
-    for btn in ['A','B','X','Y','Menu','Windows','LB','RB','LT','RT','Left_Stick','Right_Stick']:
+    for btn in ['A','B','X','Y','Menu','Windows','LB','RB','LT','RT','Left_Stick','Right_Stick','Dpad_Up','Dpad_Down','Dpad_Left','Dpad_Right']:
       if render.isInRect(pos, offsetControllerButton(btn)):
         toggleControllerButton(btn, i)
         

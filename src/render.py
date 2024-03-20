@@ -159,7 +159,7 @@ class render():
 
   def clickElement(self, pos):
     for elem in self.elements:
-      if elem['type'] == 'button' and self.isInRect(pos, elem['rect']):
+      if elem['type'] == 'button' and elem['getIsVisible']() and self.isInRect(pos, elem['rect']):
         elem['onClick'](pos)
 
   

@@ -161,12 +161,11 @@ class pathEditor:
         nodeRotations.pop(clickIndex)
         refresh()
     
-
-
   def keyDown(self, key):
     pass
-    
-    
 
   def load(self):
     refresh()
+  
+  def unload(self):
+    pass

@@ -32,7 +32,7 @@ tabIndex = 0
 tabs = [
     pathEditor.pathEditor(render),
     buttonEditor.buttonEditor(render, pathEditor),
-    export.export(pg, render)
+    export.export(pg, render, buttonEditor)
 ]
 
 tabs[tabIndex].load()
@@ -51,6 +51,7 @@ def addTab(i):
     
     def onClick(pos):
         global tabIndex
+        tabs[tabIndex].unload()
         tabIndex = i
         tabs[tabIndex].load()
         render.renderElements(pos)
@@ -100,6 +101,7 @@ while running:
         elif event.type == pg.KEYDOWN:
             tabs[tabIndex].keyDown(event.key)
             if event.key == pg.K_TAB:
+                tabs[tabIndex].unload()
                 tabIndex = (tabIndex + 1) % len(tabs)
                 tabs[tabIndex].load()
                 render.renderElements(pg.mouse.get_pos())

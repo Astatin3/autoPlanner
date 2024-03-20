@@ -17,6 +17,7 @@ keyFrames = []
 matchLength = 15
 TPS = 50
 
+tickTime = round(1/TPS*1000)
 matchTicks = matchLength * TPS
 displayTickResolution = 4
 displayTicks = round(matchTicks / displayTickResolution)
@@ -164,6 +165,9 @@ def getButtonFrameAtPos(index):
 
 def getRobotAtIndex(index):
   prevFrame, nextFrame = getSurroundingPosFrames(index)
+  
+  # print(prevFrame)
+  # print(nextFrame)
   
   if prevFrame == None and nextFrame == None:
     return (0,0), 0 
@@ -644,3 +648,7 @@ class buttonEditor:
       self.updateNodes(True)
       
     self.refresh()
+  
+    
+  def unload(self):
+    pass
